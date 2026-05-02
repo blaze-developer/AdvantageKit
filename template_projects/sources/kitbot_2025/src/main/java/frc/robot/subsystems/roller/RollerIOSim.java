@@ -9,10 +9,10 @@ package frc.robot.subsystems.roller;
 
 import static frc.robot.subsystems.roller.RollerConstants.*;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import org.wpilib.math.MathUtil;
+import org.wpilib.math.system.plant.DCMotor;
+import org.wpilib.math.system.plant.LinearSystemId;
+import org.wpilib.wpilibj.simulation.DCMotorSim;
 
 public class RollerIOSim implements RollerIO {
   private DCMotorSim sim =

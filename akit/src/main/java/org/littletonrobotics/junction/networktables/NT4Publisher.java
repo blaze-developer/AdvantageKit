@@ -7,7 +7,7 @@
 
 package org.littletonrobotics.junction.networktables;
 
-import edu.wpi.first.networktables.*;
+import org.wpilib.networktables.*;
 import java.util.HashMap;
 import java.util.Map;
 import org.littletonrobotics.junction.LogDataReceiver;
@@ -25,7 +25,7 @@ public class NT4Publisher implements LogDataReceiver {
   public NT4Publisher() {
     akitTable = NetworkTableInstance.getDefault().getTable("/AdvantageKit");
     timestampPublisher =
-        akitTable.getIntegerTopic(timestampKey.substring(1)).publish(PubSubOption.sendAll(true));
+        akitTable.getIntegerTopic(timestampKey.substring(1)).publish(PubSubOption.SEND_ALL);
   }
 
   public void putTable(LogTable table) {
@@ -51,7 +51,7 @@ public class NT4Publisher implements LogDataReceiver {
         publisher =
             akitTable
                 .getTopic(key)
-                .genericPublish(field.getValue().getNT4Type(), PubSubOption.sendAll(true));
+                .genericPublish(field.getValue().getNT4Type(), PubSubOption.SEND_ALL);
         publishers.put(key, publisher);
       }
 

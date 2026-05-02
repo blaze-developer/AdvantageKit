@@ -7,16 +7,17 @@
 
 package org.littletonrobotics.junction.mechanism;
 
-import edu.wpi.first.networktables.DoubleArrayPublisher;
-import edu.wpi.first.networktables.NTSendable;
-import edu.wpi.first.networktables.NTSendableBuilder;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.StringPublisher;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.littletonrobotics.junction.LogTable;
+import org.wpilib.networktables.DoubleArrayPublisher;
+import org.wpilib.networktables.NTSendable;
+import org.wpilib.networktables.NTSendableBuilder;
+import org.wpilib.networktables.NetworkTable;
+import org.wpilib.networktables.StringPublisher;
+import org.wpilib.util.Color8Bit;
 
 /**
  * Visual 2D representation of arms, elevators, and general mechanisms through a node-based API.

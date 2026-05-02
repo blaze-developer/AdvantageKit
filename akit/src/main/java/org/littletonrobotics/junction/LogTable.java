@@ -7,17 +7,6 @@
 
 package org.littletonrobotics.junction;
 
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.MutableMeasure;
-import edu.wpi.first.units.Unit;
-import edu.wpi.first.units.mutable.GenericMutableMeasureImpl;
-import edu.wpi.first.util.WPISerializable;
-import edu.wpi.first.util.protobuf.Protobuf;
-import edu.wpi.first.util.protobuf.ProtobufBuffer;
-import edu.wpi.first.util.struct.Struct;
-import edu.wpi.first.util.struct.StructBuffer;
-import edu.wpi.first.util.struct.StructSerializable;
-import edu.wpi.first.wpilibj.DriverStation;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
@@ -30,7 +19,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import org.littletonrobotics.junction.inputs.LoggableInputs;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.units.Measure;
+import org.wpilib.units.Unit;
+import org.wpilib.util.WPISerializable;
+import org.wpilib.util.protobuf.Protobuf;
+import org.wpilib.util.protobuf.ProtobufBuffer;
+import org.wpilib.util.struct.Struct;
+import org.wpilib.util.struct.StructBuffer;
+import org.wpilib.util.struct.StructSerializable;
+
 import us.hebi.quickbuf.ProtoMessage;
 
 /** A table of logged data in allowable types. Can reference another higher level table. */
@@ -190,7 +190,7 @@ public class LogTable {
       return true;
     }
     if (!currentValue.type.equals(type)) {
-      DriverStation.reportWarning(
+      DriverStationErrors.reportWarning(
           "[AdvantageKit] Failed to write to field \""
               + prefix
               + key
@@ -203,7 +203,7 @@ public class LogTable {
     }
     if (currentValue.customTypeStr != customTypeStr
         && !currentValue.customTypeStr.equals(customTypeStr)) {
-      DriverStation.reportWarning(
+      DriverStationErrors.reportWarning(
           "[AdvantageKit] Failed to write to field \""
               + prefix
               + key
@@ -561,7 +561,7 @@ public class LogTable {
   public <T extends LoggableInputs> void put(String key, T value) {
     if (value == null) return;
     if (this.depth > 100) {
-      DriverStation.reportWarning(
+      DriverStationErrors.reportWarning(
           "[AdvantageKit] Detected recursive table structure when logging value to field \""
               + prefix
               + key
@@ -748,7 +748,7 @@ public class LogTable {
       if (proto != null) {
         put(key, proto, value);
       } else {
-        DriverStation.reportError(
+        DriverStationErrors.reportError(
             "[AdvantageKit] Auto serialization is not supported for type "
                 + value.getClass().getSimpleName(),
             false);
@@ -772,7 +772,7 @@ public class LogTable {
     if (struct != null) {
       put(key, struct, value);
     } else {
-      DriverStation.reportError(
+      DriverStationErrors.reportError(
           "[AdvantageKit] Auto serialization is not supported for array type "
               + value.getClass().getComponentType().getSimpleName(),
           false);
@@ -1282,28 +1282,6 @@ public class LogTable {
     if (data.containsKey(prefix + key)) {
       double value = get(key).getDouble(defaultValue.baseUnitMagnitude());
       return (M) defaultValue.unit().ofBaseUnits(value);
-    } else {
-      return defaultValue;
-    }
-  }
-
-  /**
-   * Reads a MutableMeasure value from the table.
-   *
-   * @param <U> The unit type.
-   * @param <Base> The base unit type
-   * @param <M> The measure type.
-   * @param key The field name.
-   * @param defaultValue The default field value.
-   * @return The field value.
-   */
-  @SuppressWarnings("unchecked")
-  public <U extends Unit, Base extends Measure<U>, M extends MutableMeasure<U, Base, M>> M get(
-      String key, M defaultValue) {
-    if (data.containsKey(prefix + key)) {
-      double baseValue = get(key).getDouble(defaultValue.baseUnitMagnitude());
-      double relativeValue = defaultValue.unit().fromBaseUnits(baseValue);
-      return (M) new GenericMutableMeasureImpl<>(relativeValue, baseValue, defaultValue.unit());
     } else {
       return defaultValue;
     }

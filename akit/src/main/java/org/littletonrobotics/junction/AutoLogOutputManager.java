@@ -7,10 +7,6 @@
 
 package org.littletonrobotics.junction;
 
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.util.WPISerializable;
-import edu.wpi.first.util.struct.StructSerializable;
-import edu.wpi.first.wpilibj.DriverStation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,7 +20,13 @@ import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.units.Measure;
+import org.wpilib.util.WPISerializable;
+import org.wpilib.util.struct.StructSerializable;
 
 /**
  * Manages objects and packages for annotation logging of outputs with {@link
@@ -325,7 +327,7 @@ public class AutoLogOutputManager {
               try {
                 Logger.recordOutput(key, (WPISerializable) value);
               } catch (ClassCastException e) {
-                DriverStation.reportError(
+                DriverStationErrors.reportError(
                     "[AdvantageKit] Auto serialization is not supported for type "
                         + type.getSimpleName(),
                     false);
@@ -430,7 +432,7 @@ public class AutoLogOutputManager {
                 try {
                   Logger.recordOutput(key, (WPISerializable) value);
                 } catch (ClassCastException e) {
-                  DriverStation.reportError(
+                  DriverStationErrors.reportError(
                       "[AdvantageKit] Auto serialization is not supported for type "
                           + type.getSimpleName(),
                       false);
@@ -510,7 +512,7 @@ public class AutoLogOutputManager {
                 try {
                   Logger.recordOutput(key, (StructSerializable[]) value);
                 } catch (ClassCastException e) {
-                  DriverStation.reportError(
+                  DriverStationErrors.reportError(
                       "[AdvantageKit] Auto serialization is not supported for array type "
                           + componentType.getSimpleName(),
                       false);
@@ -595,7 +597,7 @@ public class AutoLogOutputManager {
                 try {
                   Logger.recordOutput(key, (StructSerializable[][]) value);
                 } catch (ClassCastException e) {
-                  DriverStation.reportError(
+                  DriverStationErrors.reportError(
                       "[AdvantageKit] Auto serialization is not supported for 2D array type "
                           + componentType.getSimpleName(),
                       false);

@@ -7,8 +7,8 @@
 
 package org.littletonrobotics.junction.networktables;
 
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import org.wpilib.networktables.DoubleEntry;
+import org.wpilib.networktables.NetworkTableInstance;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggableInputs;

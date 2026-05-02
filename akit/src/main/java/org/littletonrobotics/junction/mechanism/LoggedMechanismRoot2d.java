@@ -7,8 +7,8 @@
 
 package org.littletonrobotics.junction.mechanism;
 
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.NetworkTable;
 import java.util.HashMap;
 import java.util.Map;
 import org.littletonrobotics.junction.LogTable;
