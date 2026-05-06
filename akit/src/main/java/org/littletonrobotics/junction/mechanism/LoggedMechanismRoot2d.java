@@ -19,7 +19,7 @@ import org.littletonrobotics.junction.LogTable;
  * <p>A root is the anchor point of other nodes (such as ligaments).
  *
  * <p>Do not create objects of this class directly! Obtain instances from the {@link
- * edu.wpi.first.wpilibj.smartdashboard.Mechanism2d#getRoot(String, double, double)} factory method.
+ * org.wpilib.smartdashboard.Mechanism2d#getRoot(String, double, double)} factory method.
  *
  * <p>Append other nodes by using {@link #append(LoggedMechanismObject2d)}.
  */
