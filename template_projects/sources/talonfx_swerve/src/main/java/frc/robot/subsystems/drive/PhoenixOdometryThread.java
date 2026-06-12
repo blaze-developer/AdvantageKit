@@ -31,7 +31,7 @@ import java.util.function.DoubleSupplier;
 public class PhoenixOdometryThread extends Thread {
   private final Lock signalsLock =
       new ReentrantLock(); // Prevents conflicts when registering signals
-  private final List<BaseStatusSignal> phoenixSignals = new ArrayList<>();
+  private BaseStatusSignal[] phoenixSignals = new BaseStatusSignal[0];
   private final List<DoubleSupplier> genericSignals = new ArrayList<>();
   private final List<Queue<Double>> phoenixQueues = new ArrayList<>();
   private final List<Queue<Double>> genericQueues = new ArrayList<>();
@@ -65,7 +65,10 @@ public class PhoenixOdometryThread extends Thread {
     signalsLock.lock();
     Drive.odometryLock.lock();
     try {
-      phoenixSignals.add(signal);
+      BaseStatusSignal[] newSignals = new BaseStatusSignal[phoenixSignals.length + 1];
+      System.arraycopy(phoenixSignals, 0, newSignals, 0, phoenixSignals.length);
+      newSignals[phoenixSignals.length] = signal;
+      phoenixSignals = newSignals;
       phoenixQueues.add(queue);
     } finally {
       signalsLock.unlock();
@@ -107,14 +110,14 @@ public class PhoenixOdometryThread extends Thread {
       // Wait for updates from all signals
       signalsLock.lock();
       try {
-        if (isCANFD && phoenixSignals.size() > 0) {
+        if (isCANFD && phoenixSignals.length > 0) {
           BaseStatusSignal.waitForAll(2.0 / Drive.ODOMETRY_FREQUENCY, phoenixSignals);
         } else {
           // "waitForAll" does not support blocking on multiple signals with a bus
           // that is not CAN FD, regardless of Pro licensing. No reasoning for this
           // behavior is provided by the documentation.
           Thread.sleep((long) (1000.0 / Drive.ODOMETRY_FREQUENCY));
-          if (phoenixSignals.size() > 0) BaseStatusSignal.refreshAll(phoenixSignals);
+          if (phoenixSignals.length > 0) BaseStatusSignal.refreshAll(phoenixSignals);
         }
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -133,13 +136,13 @@ public class PhoenixOdometryThread extends Thread {
         for (BaseStatusSignal signal : phoenixSignals) {
           totalLatency += signal.getTimestamp().getLatency();
         }
-        if (phoenixSignals.size() > 0) {
-          timestamp -= totalLatency / phoenixSignals.size();
+        if (phoenixSignals.length > 0) {
+          timestamp -= totalLatency / phoenixSignals.length;
         }
 
         // Add new samples to queues
-        for (int i = 0; i < phoenixSignals.size(); i++) {
-          phoenixQueues.get(i).offer(phoenixSignals.get(i).getValueAsDouble());
+        for (int i = 0; i < phoenixSignals.length; i++) {
+          phoenixQueues.get(i).offer(phoenixSignals[i].getValueAsDouble());
         }
         for (int i = 0; i < genericSignals.size(); i++) {
           genericQueues.get(i).offer(genericSignals.get(i).getAsDouble());
