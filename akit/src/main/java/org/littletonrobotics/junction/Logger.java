@@ -45,10 +45,9 @@ public class Logger {
   private static LogTable entry = new LogTable(0);
   private static LogTable outputTable;
   private static Map<String, String> metadata = new HashMap<>();
-  private static ConsoleSource console = null;
   private static List<LoggedNetworkInput> dashboardInputs = new ArrayList<>();
   private static Supplier<ByteBuffer[]> urclSupplier = null;
-  private static boolean enableConsole = true;
+  
   private static boolean checkRobotBase = true;
 
   private static LogReplaySource replaySource;
@@ -56,6 +55,11 @@ public class Logger {
       new ArrayBlockingQueue<LogTable>(receiverQueueCapacity);
   private static final ReceiverThread receiverThread = new ReceiverThread(receiverQueue);
   private static boolean receiverQueueFault = false;
+
+  private static record ConsoleData(String data, int index) {}
+  private static ConsoleSource console = null;
+  private static int consoleIndex = 0;
+  private static boolean enableConsole = true;
 
   private Logger() {}
 
@@ -352,12 +356,13 @@ public class Logger {
       }
       long consoleCaptureStart = RobotController.getMonotonicTime();
       if (enableConsole) {
-        String consoleData = console.getNewData();
+        String newConsoleData = console.getNewData();
         if (extraConsoleData != null) {
-          consoleData += extraConsoleData;
+          newConsoleData += extraConsoleData;
         }
-        if (!consoleData.isEmpty()) {
-          recordOutput("Console", consoleData.trim());
+        if (!newConsoleData.isEmpty()) {
+          // recordOutput("Console", new ConsoleData(newConsoleData, consoleIndex));
+          consoleIndex++;
         }
       }
       long consoleCaptureEnd = RobotController.getMonotonicTime();
