@@ -51,6 +51,7 @@ public class Logger {
   private static String robotBasePrefix = "RobotBase";
   private static Map<String, String> metadata = new HashMap<>();
   private static ConsoleSource console = null;
+  private static long consoleIndex = 0;
   private static List<LoggedNetworkInput> dashboardInputs = new ArrayList<>();
   private static final GcStatsCollector gcStatsCollector = new GcStatsCollector();
   private static Supplier<ByteBuffer[]> urclSupplier = null;
@@ -392,12 +393,14 @@ public class Logger {
       }
       long consoleCaptureStart = RobotController.getMonotonicTime();
       if (enableConsole) {
-        String consoleData = console.getNewData();
+        String newConsoleData = console.getNewData();
         if (extraConsoleData != null) {
-          consoleData += extraConsoleData;
+          newConsoleData += extraConsoleData;
         }
-        if (!consoleData.isEmpty()) {
-          recordOutput("Console", consoleData.trim());
+        if (!newConsoleData.isEmpty()) {
+          recordOutput("Console/.type", "ConsoleData");
+          recordOutput("Console/data", newConsoleData.trim());
+          recordOutput("Console/index", consoleIndex++);
         }
       }
       long gcStatsStart = RobotController.getMonotonicTime();
