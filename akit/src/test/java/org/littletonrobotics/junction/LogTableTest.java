@@ -7,8 +7,11 @@
 
 package org.littletonrobotics.junction;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.Rotations;
 
 import org.junit.jupiter.api.Test;
@@ -38,6 +41,26 @@ public class LogTableTest {
   }
 
   @Test
+  public void TestMeasureArrayExplicit() {
+    LogTable table = new LogTable(0);
+
+    // 1. Test putMeasures and getMeasures explicitly
+    Angle[] angles = {Rotations.of(0.15), Degrees.of(45), Radians.of(3.14)};
+    table.putMeasures("AnglesExplicit", angles);
+
+    Angle[] emptyArray = {};
+    Angle[] restoredAngles = table.getMeasures("AnglesExplicit", emptyArray);
+
+    assertArrayEquals(angles, restoredAngles);
+
+    // Verify stored types and values
+    for (int i = 0; i < angles.length; i++) {
+      assertEquals(angles[i].baseUnitMagnitude(), table.get("AnglesExplicit").getDoubleArray()[i]);
+      assertEquals(angles[i].baseUnit().name(), table.get("AnglesExplicit").unitStr);
+    }
+  }
+
+  @Test
   public void TestMeasureRecordPassthrough() {
     LogTable table = new LogTable(0);
 
@@ -54,6 +77,25 @@ public class LogTableTest {
     assertEquals(angle.baseUnitMagnitude(), table.get("AngleRecord").getDouble());
     assertEquals(angle.baseUnit().name(), table.get("AngleRecord").unitStr);
     assertTrue(table.get("AngleRecord").customTypeStr == null);
+  }
+
+  @Test
+  public void TestMeasureArrayRecordPassthrough() {
+    LogTable table = new LogTable(0);
+
+    Angle[] angles = {Rotations.of(0.25), Degrees.of(90), Radians.of(6.28)};
+    table.put("AnglesRecord", angles);
+
+    Angle[] emptyArray = {};
+    Angle[] restoredAngles = table.getMeasures("AnglesRecord", emptyArray);
+
+    assertArrayEquals(angles, restoredAngles);
+
+    // Verify that the delegation redirected it to a measure array instead of a struct array
+    for (int i = 0; i < angles.length; i++) {
+      assertEquals(angles[i].baseUnitMagnitude(), table.get("AnglesRecord").getDoubleArray()[i]);
+      assertEquals(angles[i].baseUnit().name(), table.get("AnglesRecord").unitStr);
+    }
   }
 
   @Test
